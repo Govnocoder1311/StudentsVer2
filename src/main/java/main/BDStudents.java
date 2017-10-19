@@ -60,7 +60,14 @@ public class BDStudents
             {
                 frame.setVisible(false);
                 Add add = new Add();
-                add.showWin(true);
+                try 
+                {
+                    add.showWin(true);
+                } 
+                catch (SQLException ex) 
+                {
+                    System.out.println("Ошибка подключения!");
+                }
             }
         });
         
