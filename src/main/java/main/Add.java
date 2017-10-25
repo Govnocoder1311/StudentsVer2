@@ -117,7 +117,7 @@ public class Add
         PreparedStatement stmt = null;
         try
         {
-            stmt = con.prepareStatement("INSERT INTO studemts "
+            stmt = con.prepareStatement("INSERT INTO students "
                     + "(id_student, fio, kurs, description, omissions, avatage_score) "
                     + "VALUES (?, ?, ?, ?, ?)");
             String id1 = Integer.toString(id);
