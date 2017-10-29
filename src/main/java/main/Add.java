@@ -1,11 +1,15 @@
 package main;
 
+import com.mysql.fabric.jdbc.FabricMySQLDriver;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -18,8 +22,16 @@ public class Add
     
     void showWin(boolean visible) throws SQLException
     {
-        DBProcessor db = new DBProcessor();
-        Connection conn = db.getConnection(URL, USERNAME, PASSWORD);
+        try
+        {
+            Driver driver = new FabricMySQLDriver();
+            DriverManager.registerDriver(driver);
+        }
+        catch(SQLException ex)
+        {
+            System.out.println("Ошибка регистрации драйвера");
+            return;
+        }
         
         JFrame frame = new JFrame("Добавить запись");
         JPanel panel = new JPanel();
@@ -48,24 +60,31 @@ public class Add
             @Override
             public void actionPerformed(ActionEvent e) 
             {
-                String id1 = tf_id_student.getText();
-                int id2 = Integer.parseInt(id1);
-                String fio1 = tf_fio.getText();
-                String kurs1 = tf_kurs.getText();
-                int kurs2 = Integer.parseInt(kurs1);
-                String description1 = tf_description.getText();
-                String omissions1 = tf_omissions.getText();
-                int omissions2 = Integer.parseInt(omissions1);
-                String avatage_score1 = tf_avatage_score.getText();
-                double avatage_score2 = Double.parseDouble(avatage_score1);
-                try 
+                String id = tf_id_student.getText();
+                int id2 = Integer.parseInt(id);
+                String fio = tf_fio.getText();
+                String kurs = tf_kurs.getText();
+                int kurs2 = Integer.parseInt(kurs);
+                String description = tf_description.getText();
+                String omissions = tf_omissions.getText();
+                int omissions2 = Integer.parseInt(omissions);
+                String avatage_score = tf_avatage_score.getText();
+                double avatage_score2 = Double.parseDouble(avatage_score);
+                
+                try(Connection connection =  DriverManager.getConnection(URL, USERNAME, PASSWORD);
+                Statement statement = connection.createStatement())
                 {
-                    insert(conn, id2, fio1, kurs2, description1, omissions2, avatage_score2);
-                } 
-                catch (SQLException ex)
-                {
-                    System.out.printf("Ошибка вставки");
+                    statement.execute("INSERT INTO bdstudents.students"
+                            + "(id_students, fio, kurs, description, omissions,"
+                            + " avatage_score) values (" + id2 +", " + "\"" + fio 
+                            + "\"" + ", " + kurs2 + ", " + "\"" + description 
+                            + "\"" + ", " + omissions2 + ", " + avatage_score2 + ")");
                 }
+                catch(SQLException ex)
+                {
+                    ex.printStackTrace();
+                }
+                
                 tf_id_student.setText("");
                 tf_fio.setText("");
                 tf_kurs.setText("");
@@ -106,38 +125,5 @@ public class Add
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(300, 500);
         frame.setVisible(true);
-        
-        conn.close();
-    }
-    
-    public void insert(Connection con, int id, String fio, int kurs, 
-            String description, int omissions, 
-            double avatage_score) throws SQLException 
-    {
-        PreparedStatement stmt = null;
-        try
-        {
-            stmt = con.prepareStatement("INSERT INTO students "
-                    + "(id_student, fio, kurs, description, omissions, avatage_score) "
-                    + "VALUES (?, ?, ?, ?, ?)");
-            String id1 = Integer.toString(id);
-            String kurs1 = Integer.toString(kurs);
-            String omissions1 = Integer.toString(omissions);
-            String avatage_score1 = Double.toString(avatage_score);
-            stmt.setString(1, id1);
-            stmt.setString(2, fio);
-            stmt.setString(3, kurs1);
-            stmt.setString(4, description);
-            stmt.setString(5, omissions1);
-            stmt.setString(6, avatage_score1);
-            stmt.executeUpdate();
-        }
-        finally 
-        {
-            if (stmt != null) 
-            {
-                stmt.close();
-            }
-        }
     }
 }

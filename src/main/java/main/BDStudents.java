@@ -48,7 +48,14 @@ public class BDStudents
             {
                 frame.setVisible(false);
                 Find find = new Find();
-                find.showWin(true);
+                try 
+                {
+                    find.showWin(true);
+                } 
+                catch (SQLException ex) 
+                {
+                    System.out.println("Ошибка подключения!");
+                }
             }
         });
         
@@ -60,14 +67,7 @@ public class BDStudents
             {
                 frame.setVisible(false);
                 Add add = new Add();
-                try 
-                {
-                    add.showWin(true);
-                } 
-                catch (SQLException ex) 
-                {
-                    System.out.println("Ошибка подключения!");
-                }
+                add.showWin(true);
             }
         });
         
