@@ -8,6 +8,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 public class Find
@@ -18,7 +20,7 @@ public class Find
     
     void showWin(boolean visible) throws SQLException
     {
-        DBProcessor db = new DBProcessor();
+        /*DBProcessor db = new DBProcessor();
         Connection conn = db.getConnection(URL, USERNAME, PASSWORD);
         String query = "select * from bdstudents.students where fio like '%Илья%'";
         Statement statement = conn.createStatement();
@@ -40,7 +42,7 @@ public class Find
             }
             data.add(row);
         }
-        JTable table = new JTable (data, columns);
+        JTable table = new JTable (data, columns);*/
         
         JFrame frame = new JFrame("Найти запись");
         JPanel panel = new JPanel();
@@ -70,19 +72,16 @@ public class Find
             @Override
             public void actionPerformed(ActionEvent e) 
             {
-                /*String query = "select * from bdstudents.students where fio like '%Илья%'";
-                Statement statement = null;
-                try 
+                DBProcessor db;
+                try
                 {
-                    statement = conn.createStatement();
-                } 
-                catch (SQLException ex) 
-                {
-                    Logger.getLogger(Find.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                try 
-                {
+                    db = new DBProcessor();
+                    Connection conn = db.getConnection(URL, USERNAME, PASSWORD);
+                    String query = "select * from bdstudents.students where fio like '%" 
+                            + tf_find.getText() + "%'";
+                    Statement statement = conn.createStatement();
                     ResultSet resSet = statement.executeQuery(query);
+
                     ResultSetMetaData md = resSet.getMetaData();
                     int columnCount = md.getColumnCount();
                     Vector columns = new Vector(columnCount);
@@ -99,19 +98,21 @@ public class Find
                         }
                         data.add(row);
                     }
-                    table = new JTable (data, columns);
+                    JTable table = new JTable (data, columns);
+                    
+                    panel.add(table, 2);
                 } 
                 catch (SQLException ex) 
                 {
                     Logger.getLogger(Find.class.getName()).log(Level.SEVERE, null, ex);
-                }*/
+                }
             }
         });
         
         
         panel.add(label_find);
         panel.add(tf_find);
-        panel.add(table);
+        //panel.add(table);
         panel.add(find);
         panel.add(back);
         
